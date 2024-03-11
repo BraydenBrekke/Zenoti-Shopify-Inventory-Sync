@@ -1,0 +1,50 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: Create and publish a Docker image
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      # see: https://github.com/aws-actions/configure-aws-credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # see: https://github.com/aws-actions/amazon-ecr-login
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+          registry-type: private
+          context: .
+
+      #- name: Clientstore Tag build push
+        #run: |
+          #docker build -t clientstore-zenoti . --file Dockerfile.clientstore
+          #docker tag clientstore-zenoti:latest 644747499156.dkr.ecr.us-east-1.amazonaws.com/clientstore-zenoti:latest
+          #docker push 644747499156.dkr.ecr.us-east-1.amazonaws.com/clientstore-zenoti:latest
+          #aws lambda update-function-code \
+           #--function-name Clientstore-Zenoti \
+           #--image-uri 644747499156.dkr.ecr.us-east-1.amazonaws.com/clientstore-zenoti:latest
+          
+      - name: Log out of Amazon ECR
+        if: always()
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}
