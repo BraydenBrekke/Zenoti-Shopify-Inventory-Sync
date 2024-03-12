@@ -13,24 +13,25 @@ def handler(event, context):
     for shopify_location in shopify_locations:
         print("[syncing location " + shopify_location["name"] + "]")
         shopify_levels = shopify.get_inventory_levels(shopify_location["id"])
+        zenoti_center_id = zenoti.get_center_id_from_center_name(
+                shopify_location["name"]
+            )
         for shopify_level in shopify_levels:
             shopify_item = shopify.get_inventory_item(
                 shopify_level["inventory_item_id"]
             )
-            zenoti_center_id = zenoti.get_center_id_from_center_name(
-                shopify_location["name"]
-            )
-            zenoti_products = zenoti.get_stock_quantity_of_product(
+            zenoti_product = zenoti.get_stock_quantity_of_product(
                 zenoti_center_id, shopify_item["sku"]
             )
-            if zenoti_products:
-                zenoti_product = zenoti_products[0]
+            if zenoti_product:
                 #shopify.set_inventory_item_level(
                     #shopify_item["id"],
                     #shopify_location["id"],
-                    #zenoti_product["total_quantity"],
+                    #zenoti_product["total_quantity"], 
                 #)
                 print(" synced " + zenoti_product["product_name"])
+            else:
+                print("ERROR: no match for " + shopify_item["sku"])
         print("[synced location " + shopify_location["name"] + "]")
 
 

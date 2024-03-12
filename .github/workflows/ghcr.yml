@@ -36,14 +36,14 @@ jobs:
           registry-type: private
           context: .
 
-      #- name: Clientstore Tag build push
-        #run: |
-          #docker build -t clientstore-zenoti . --file Dockerfile.clientstore
-          #docker tag clientstore-zenoti:latest 644747499156.dkr.ecr.us-east-1.amazonaws.com/clientstore-zenoti:latest
-          #docker push 644747499156.dkr.ecr.us-east-1.amazonaws.com/clientstore-zenoti:latest
-          #aws lambda update-function-code \
-           #--function-name Clientstore-Zenoti \
-           #--image-uri 644747499156.dkr.ecr.us-east-1.amazonaws.com/clientstore-zenoti:latest
+      - name: Clientstore Tag build push
+        run: |
+          docker build -t zenoti-shopify-inventory-sync . --file Dockerfile.clientstore
+          docker tag zenoti-shopify-inventory-sync:latest 644747499156.dkr.ecr.us-east-1.amazonaws.com/zenoti-shopify-inventory-sync:latest
+          docker push 644747499156.dkr.ecr.us-east-1.amazonaws.com/zenoti-shopify-inventory-sync:latest
+          aws lambda update-function-code \
+           --function-name Zenoti-Shopify-Inventory-Sync \
+           --image-uri 644747499156.dkr.ecr.us-east-1.amazonaws.com/zenoti-shopify-inventory-sync:latest
           
       - name: Log out of Amazon ECR
         if: always()

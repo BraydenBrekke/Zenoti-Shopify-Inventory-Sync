@@ -53,16 +53,17 @@ class Zenoti:
         except requests.exceptions.RequestException as e:
             print(e)
 
-    def get_stock_quantity_of_product(self, center_id, seach_string):
+    def get_stock_quantity_of_product(self, center_id, sku):
         try:
             response = requests.get(
-                f"https://api.zenoti.com/v1/inventory/stock?center_id={center_id}&inventory_date=2024-03-07&search_string={seach_string}",
+                f"https://api.zenoti.com/v1/inventory/stock?center_id={center_id}&inventory_date=2024-03-07&search_string={sku}",
                 headers={
                     "accept": "application/json",
                     "Authorization": f"bearer {self.token}",
                 }
             )
             products = response.json()['list']
-            return products
+            if products:
+                return products[0]
         except requests.exceptions.RequestException as e:
             print(e)
