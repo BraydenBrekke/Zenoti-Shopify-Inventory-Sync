@@ -60,9 +60,9 @@ class Zenoti:
                 headers={
                     "accept": "application/json",
                     "Authorization": f"bearer {self.token}",
-                }
+                },
             )
-            products = response.json()['list']
+            products = response.json()["list"]
             if products:
                 return products[0]
         except requests.exceptions.RequestException as e:

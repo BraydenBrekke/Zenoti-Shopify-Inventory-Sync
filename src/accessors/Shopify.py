@@ -1,7 +1,4 @@
 import requests
-import datetime
-import time
-import pytz
 
 
 class Shopify:
