@@ -20,18 +20,19 @@ def handler(event, context):
             shopify_item = shopify.get_inventory_item(
                 shopify_level["inventory_item_id"]
             )
-            zenoti_product = zenoti.get_stock_quantity_of_product(
-                zenoti_center_id, shopify_item["sku"]
-            )
-            if zenoti_product:
-                # shopify.set_inventory_item_level(
-                # shopify_item["id"],
-                # shopify_location["id"],
-                # zenoti_product["total_quantity"],
-                # )
-                print(" synced " + zenoti_product["product_name"])
-            else:
-                print("ERROR: no match for " + shopify_item["sku"])
+            if shopify_item["sku"]:
+                zenoti_product = zenoti.get_stock_quantity_of_product(
+                    zenoti_center_id, shopify_item["sku"]
+                )
+                if zenoti_product:
+                    # shopify.set_inventory_item_level(
+                    # shopify_item["id"],
+                    # shopify_location["id"],
+                    # zenoti_product["total_quantity"],
+                    # )
+                    print(" synced " + zenoti_product["product_name"])
+                else:
+                    print("ERROR: no match for " + shopify_item["sku"])
         print("[synced location " + shopify_location["name"] + "]")
 
 
