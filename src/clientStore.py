@@ -17,12 +17,15 @@ def handler(event, context):
             shopify_location["name"]
         )
         for shopify_level in shopify_levels:
-            shopify_item = shopify.get_inventory_item(
+            (
+                shopify_product_barcode,
+                shopify_product_title,
+            ) = shopify.get_inventory_item_barcode_and_name(
                 shopify_level["inventory_item_id"]
             )
-            if shopify_item["sku"]:
+            if shopify_product_barcode:
                 zenoti_product = zenoti.get_stock_quantity_of_product(
-                    zenoti_center_id, shopify_item["sku"]
+                    zenoti_center_id, shopify_product_barcode
                 )
                 if zenoti_product:
                     # shopify.set_inventory_item_level(
@@ -30,9 +33,13 @@ def handler(event, context):
                     # shopify_location["id"],
                     # zenoti_product["total_quantity"],
                     # )
-                    print(" synced " + zenoti_product["product_name"])
+                    print(
+                        " synced " + zenoti_product["product_name"]
+                    )  # filter on only active products
                 else:
-                    print("ERROR: no match for " + shopify_item["sku"])
+                    print(
+                        f'ERROR: no match in Zenoti for product "{shopify_product_title}" on shopify barcode {shopify_product_barcode}'
+                    )
         print("[synced location " + shopify_location["name"] + "]")
 
 

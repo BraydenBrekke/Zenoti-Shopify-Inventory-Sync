@@ -29,14 +29,40 @@ class Shopify:
         except requests.exceptions.RequestException as e:
             print(e)
 
-    def get_inventory_item(self, item_id):
+    def get_inventory_item_barcode_and_name(self, item_id):
         try:
-            response = requests.request(
-                "GET",
-                f"https://{self.url}.myshopify.com/admin/api/2023-10/inventory_items/{item_id}.json",
+            inventory_item_response = requests.post(
+                f"https://{self.url}.myshopify.com/admin/api/2023-10/graphql.json",
                 headers={"X-Shopify-Access-Token": self.token},
+                json={
+                    "query": """{
+                        inventoryItem(id: "gid://shopify/InventoryItem/"""
+                    + str(item_id)
+                    + """"){
+                            variant{
+                                barcode
+                                product {
+                                    title
+                                    status
+                                }
+                            }
+                        }
+                    }""",
+                },
             )
-            return response.json()["inventory_item"]
+            inventory_item = inventory_item_response.json()
+            status = inventory_item["data"]["inventoryItem"]["variant"]["product"][
+                "status"
+            ]
+            if status != "ACTIVE":
+                return None, None
+
+            barcode = inventory_item["data"]["inventoryItem"]["variant"]["barcode"]
+            title = inventory_item["data"]["inventoryItem"]["variant"]["product"][
+                "title"
+            ]
+
+            return barcode, title
         except requests.exceptions.RequestException as e:
             print(e)
 
