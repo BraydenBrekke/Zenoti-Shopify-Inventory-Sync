@@ -1,12 +1,12 @@
 from accessors.Shopify import Shopify
 from accessors.Zenoti import Zenoti
-
-
-clinic_shopify_token = "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"
-clinic_url = "options-medical-weight-loss"
+from accessors.Secrets_Manager import get_secret
 
 
 def handler(event, context):
+    clinic_shopify_token = get_secret("clinic_shopify_token")
+    clinic_url = "options-medical-weight-loss"
+
     shopify = Shopify(clinic_url, clinic_shopify_token)
     zenoti = Zenoti()
     shopify_locations = shopify.get_inventory_locations()

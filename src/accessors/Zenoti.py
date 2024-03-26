@@ -1,19 +1,24 @@
 import requests
 import difflib
 import json
+import boto3
+from accessors.Secrets_Manager import get_secret
 
 
 class Zenoti:
     def __init__(self):
         try:
+            zenoti_username = get_secret("zenoti_username")
+            zenoti_password = get_secret("zenoti_password")
+            zenoti_token = get_secret("zenoti_token")
             payload = json.dumps(
                 {
                     "account_name": "options",
-                    "user_name": "bbrekke",
-                    "password": "kewboq-rovged-7zuXky",
+                    "user_name": zenoti_username,
+                    "password": zenoti_password,
                     "grant_type": "password",
                     "app_id": "84EA22FC-4EE4-4801-803A-9332C365E83B",
-                    "app_secret": "c5913b53d97e4b64add8fbc69857833044a99f9df2644c37b32cd221acd90e6e",  # noqa
+                    "app_secret": zenoti_token,  # noqa
                     "device_id": "script",
                 }
             )
